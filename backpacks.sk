@@ -56,6 +56,7 @@ on inventory close:
             set slot loop-value - 1 of event-inventory to air
             set {_return} to true
         else:
+            send loop-value
             set {backpack::%{_id}%::%loop-value - 1%} to slot loop-value - 1 of event-inventory
     if {_return} is true:
         send " &c&l❌ &8• &fYou cannot store a backpack inside a backpack!"
