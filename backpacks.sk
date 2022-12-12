@@ -44,7 +44,6 @@ on drop:
 on inventory close:
     metadata tag "backpack.gui" of player = event-inventory
     set {_id} to metadata tag "backpack.open" of player
-    send {_id}
     set {_return} to false
     delete {backpack::%{_id}%::*}
     loop 54 times:
