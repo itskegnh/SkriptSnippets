@@ -1,0 +1,64 @@
+command /backpack <integer=3>:
+    permission: backpack.admin
+    permission message: &cInsufficient Permisisons!
+    usage: &cCommand Usage: &f/backpack <size>
+    trigger:
+        set {_item} to minecart with chest named "&6Backpack" with lore "&8(Right-Click)", "&8• &7Rows: &e%arg * 9% slots"
+        set {_nbt} to nbt compound of {_item}
+        set tag "tag;backpack;size" of {_nbt} to arg-1
+        add 1 to {backpack_id}
+        set tag "tag;backpack;id" of {_nbt} to {backpack_id}
+        set {_item} to item from nbt {_nbt}
+        give player {_item}
+        send " &a&l✔ &8• &fYou have been given a backpack with &e%arg * 9% &fslots!"
+        play sound "block.note_block.bit" with pitch 1 to player
+
+on rightclick:
+    set {_} to nbt compound of player's tool
+    tag "tag;backpack;id" of {_} is set:
+        cancel event
+        set {_size} to tag "tag;backpack;size" of {_}
+        set {_gui} to chest inventory with {_size} rows named "Backpack"
+        set {_id} to tag "tag;backpack;id" of {_}
+        loop indices of {backpack::%{_id}%::*}:
+            set slot (loop-value parsed as integer) of {_gui} to {backpack::%{_id}%::%loop-value%}
+        set metadata tag "backpack.open" of player to {_id}
+        set metadata tag "backpack.gui" of player to {_gui}
+        open {_gui} to player
+    else:
+        set {_} to nbt compound of player's offhand item
+        tag "tag;backpack;id" of {_} is set
+        cancel event
+        send " &c&l❌ &8• &fYou must hold a backpack in your main hand!"
+        play sound "block.note_block.bit" with pitch 0 to player
+
+on drop:
+    set {_} to nbt compound of event-item
+    tag "tag;backpack;id" of {_} is set
+    set {_id} to tag "tag;backpack;id" of {_}
+    {_id} = metadata tag "backpack.open" of player
+    cancel event
+    send " &c&l❌ &8• &fYou cannot drop your backpack!"
+    play sound "block.note_block.bit" with pitch 0 to player
+
+on inventory close:
+    metadata tag "backpack.gui" of player = event-inventory
+    set {_id} to metadata tag "backpack.open" of player
+    set {_return} to false
+    loop 54 times:
+        slot loop-value - 1 of event-inventory is not air
+        set {_} to nbt compound of slot loop-value - 1 of event-inventory
+        tag "tag;backpack;id" of {_} is set:
+            player can hold slot loop-value - 1 of event-inventory:
+                give player slot loop-value - 1 of event-inventory
+            else:
+                drop slot loop-value - 1 of event-inventory at player ~ vector(0, 1, 0)
+            set slot loop-value - 1 of event-inventory to air
+            set {_return} to true
+        else:
+            set {backpack::%{_id}%::%loop-value - 1%} to slot loop-value - 1 of event-inventory
+    if {_return} is true:
+        send " &c&l❌ &8• &fYou cannot store a backpack inside a backpack!"
+        play sound "block.note_block.bit" with pitch 0 to player
+    delete metadata tag "backpack.open" of player
+    delete metadata tag "backpack.gui" of player
