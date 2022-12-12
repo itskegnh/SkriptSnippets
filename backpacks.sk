@@ -42,6 +42,7 @@ on drop:
     play sound "block.note_block.bit" with pitch 0 to player
 
 on inventory close:
+    send "u closed inv"
     metadata tag "backpack.gui" of player = event-inventory
     send "A"
     set {_id} to metadata tag "backpack.open" of player
