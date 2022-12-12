@@ -48,8 +48,8 @@ on inventory close:
     loop 54 times:
         slot loop-value - 1 of event-inventory is not air
         set {_} to nbt compound of slot loop-value - 1 of event-inventory
-        tag "tag;backpack;id" of {_} is set:
-            player can hold slot loop-value - 1 of event-inventory:
+        if tag "tag;backpack;id" of {_} is set:
+            if player can hold slot loop-value - 1 of event-inventory:
                 give player slot loop-value - 1 of event-inventory
             else:
                 drop slot loop-value - 1 of event-inventory at player ~ vector(0, 1, 0)
