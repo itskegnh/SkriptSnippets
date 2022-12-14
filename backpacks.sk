@@ -3,7 +3,7 @@ command /backpack <integer=3>:
     permission message: &cInsufficient Permisisons!
     usage: &cCommand Usage: &f/backpack <size>
     trigger:
-        set {_item} to minecart with chest named "&6Backpack" with lore "&8(Right-Click)", "&8• &7Rows: &e%arg * 9% slots"
+        set {_item} to minecart with chest named "&6Backpack" with lore "&8(Right-Click)", "&8• &7Slots: &e%arg * 9% slots"
         set {_nbt} to nbt compound of {_item}
         set tag "tag;backpack;size" of {_nbt} to arg-1
         add 1 to {backpack_id}
